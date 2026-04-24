@@ -10,48 +10,53 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 load_dotenv()
 
 from agents.trading_agent import TradingAgent
+from utils.logger import get_logger
 
-def main():
-    
-    # Check for API keys
-    if not os.getenv("OPENROUTER_API_KEY"):
-        print("WARNING: OPENROUTER_API_KEY not set in .env. Agent might fail.")
-    if not os.getenv("APIFY_API_KEY"):
-        print("WARNING: APIFY_API_KEY not set in .env. Historical research will be mocked.")
+logger = get_logger()
 
+def run_analysis(asset):
+    logger.info(f"--- Starting Analysis for {asset} ---")
     agent = TradingAgent()
     
-    # The Task for the agent
     initial_task = (
-        "You are a Senior Crypto Trading Analyst. Your goal is to find the best 5-minute prediction "
-        "opportunities for BTC and ETH. \n"
+        f"Analyze {asset} for the best 5-minute prediction opportunities. \n"
         "Workflow:\n"
-        "1. Use 'market_search' to find current markets on PolyMarket and Kalshi.\n"
-        "2. For a selected market, use 'research_data' to get the last 1000 bars (5m interval).\n"
-        "3. Use 'predict_move' to run the Kronos model on the research data.\n"
-        "4. Use 'risk_management' to calculate position sizing based on the prediction and market price.\n"
-        "5. Provide a summary of the trade recommendation including the rationale.\n"
-        "6. Finally, self-reflect: if the prediction confidence is low or risk is too high, suggest what "
-        "extra data would improve the prediction."
+        "1. Search for prediction markets.\n"
+        "2. Fetch 1000 bars of historical data.\n"
+        "3. Run Kronos prediction.\n"
+        "4. Calculate Kelly position sizing.\n"
+        "5. Provide final trade recommendation."
     )
 
-    print("--- CrowdWisdom Trading Agent Loop Starting ---")
-    
     try:
         result = agent.run(initial_task)
+        logger.info(f"Analysis for {asset} completed successfully.")
         
-        print("\n--- Final Recommendation ---")
         if isinstance(result, dict) and "final_response" in result:
+            print(f"\n--- Recommendation for {asset} ---")
             print(result["final_response"])
         else:
             print(result)
-            
-        # Optional: Feedback loop - ask the agent to refine or scale
-        # scale_task = "Now, think about how to scale this to 10 more assets and implement an arbitrage check between Polymarket and Kalshi."
-        # agent.run(scale_task)
-
     except Exception as e:
-        print(f"Error in agent execution: {e}")
+        logger.error(f"Error during {asset} analysis: {e}")
+
+def main():
+    # Asset list for scale
+    assets = os.getenv("ASSET_LIST", "BTC,ETH,SOL").split(",")
+    
+    # Check for API keys
+    if not os.getenv("OPENROUTER_API_KEY"):
+        logger.warning("OPENROUTER_API_KEY not set in .env. Agent might fail.")
+    if not os.getenv("APIFY_API_KEY"):
+        logger.warning("APIFY_API_KEY not set. Historical research will use fallback/mock.")
+
+    logger.info(f"CrowdWisdom Trading Agent starting for assets: {assets}")
+    
+    for asset in assets:
+        asset = asset.strip()
+        run_analysis(asset)
+        # Small delay to prevent rate limits at scale
+        time.sleep(2)
 
 if __name__ == "__main__":
     main()
