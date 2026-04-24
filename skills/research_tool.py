@@ -4,7 +4,7 @@ import json
 import os
 from typing import Dict, Any, List
 from datetime import datetime
-from utils.logger import get_logger
+from app_utils.logger import get_logger
 
 logger = get_logger()
 
@@ -17,9 +17,19 @@ def fetch_crypto_history(symbol: str, interval: str = "5m", limit: int = 1000) -
         if not APIFY_API_KEY:
             logger.warning("APIFY_API_KEY missing. Skipping mandatory Apify fetch.")
         else:
+            # Calculate a startDate for the scraper (e.g., 7 days ago)
+            from datetime import timedelta
+            start_date_str = (datetime.now() - timedelta(days=7)).strftime("%Y-%m-%d")
+            
             logger.info(f"Attempting mandatory Apify fetch for {symbol} ({interval})")
             client = ApifyClient(APIFY_API_KEY)
-            run_input = {"symbols": [symbol], "interval": interval, "mode": "klines", "limit": limit}
+            run_input = {
+                "symbols": [symbol], 
+                "interval": interval, 
+                "mode": "klines", 
+                "limit": limit,
+                "startDate": start_date_str
+            }
             run = client.actor("crawlerbros/binance-price-scraper").call(run_input=run_input)
             results = [item for item in client.dataset(run["defaultDatasetId"]).iterate_items()]
             if results:
@@ -44,11 +54,15 @@ def fetch_crypto_history(symbol: str, interval: str = "5m", limit: int = 1000) -
         return [{"timestamp": i, "open": 60000+i, "high": 60010+i, "low": 59990+i, "close": 60005+i, "volume": 100} for i in range(10)]
 
 def research_tool_handler(args: Dict[str, Any], **kwargs) -> str:
-    asset = args.get("asset", "BTC")
+    # Extract asset and clean it (e.g., "ETH" or "ETHUSDT")
+    asset_raw = args.get("asset", "BTC").upper()
+    asset = asset_raw.replace("USDT", "")
+    
     interval = args.get("interval", "5m")
     limit = args.get("limit", 1000)
     
     symbol = f"{asset}USDT"
+    logger.info(f"Research handler called for {symbol}")
     data = fetch_crypto_history(symbol, interval, limit)
     
     return json.dumps({
