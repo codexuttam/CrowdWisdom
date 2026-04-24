@@ -1,0 +1,17 @@
+# Core
+hermes-agent @ git+https://github.com/NousResearch/hermes-agent.git
+python-dotenv
+requests
+pandas
+numpy
+
+# Data Scraping
+apify-client
+
+# Prediction (Kronos)
+torch
+transformers
+
+# Performance
+joblib
+einops
