@@ -54,7 +54,7 @@ class TradingAgent:
             quiet_mode=True
         )
 
-    def run(self, task: str):
+    def run(self, task: str) -> Any:
         print(f"Agent starting task: {task}")
         response = self.agent.run_conversation(task)
         return response
