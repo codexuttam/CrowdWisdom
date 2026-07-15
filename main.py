@@ -44,7 +44,7 @@ def run_analysis(asset: str):
 def main():
     """Main entry point for the CrowdWisdom agent application."""
     # Asset list for scale
-    assets = os.getenv("ASSET_LIST", "BTC,ETH,SOL").split(",")
+    assets = [a.strip() for a in os.getenv("ASSET_LIST", "BTC,ETH,SOL").split(",") if a.strip()]
     
     # Check for API keys
     if not os.getenv("OPENROUTER_API_KEY"):
