@@ -43,6 +43,7 @@ def register_custom_tools():
     )
 
 class TradingAgent:
+    """Main trading agent that coordinates research and prediction."""
     def __init__(self, model: str = None):
         register_custom_tools()
         self.model = model or os.getenv("MODEL_NAME", "tencent/hy3-preview:free")
