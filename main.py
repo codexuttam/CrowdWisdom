@@ -42,6 +42,7 @@ def run_analysis(asset: str):
         logger.error(f"Error during {asset} analysis: {e}")
 
 def main():
+    """Main entry point for the CrowdWisdom agent application."""
     # Asset list for scale
     assets = os.getenv("ASSET_LIST", "BTC,ETH,SOL").split(",")
     
