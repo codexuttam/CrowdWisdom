@@ -55,7 +55,7 @@ class TradingAgent:
         )
 
     def run(self, task: str) -> Any:
-        print(f"Agent starting task: {task}")
+        print(f"[TradingAgent] Starting task: {task}")
         response = self.agent.run_conversation(task)
         return response
 
