@@ -61,7 +61,7 @@ def main():
         asset = asset.strip()
         run_analysis(asset)
         # Small delay to prevent rate limits at scale
-        time.sleep(2)
+        time.sleep(3)  # Increased delay for stability
 
 if __name__ == "__main__":
     main()
