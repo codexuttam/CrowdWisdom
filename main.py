@@ -17,7 +17,7 @@ logger = get_logger()
 # Configure global timeout or constraints if needed
 GLOBAL_TIMEOUT = 300
 
-def run_analysis(asset: str):
+def run_analysis(asset: str, timeout: int = 300):
     """Run trading analysis for a specific asset."""
     logger.info(f"--- Starting Analysis for {asset} ---")
     agent = TradingAgent()
