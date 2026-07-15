@@ -15,6 +15,7 @@ from app_utils.logger import get_logger
 logger = get_logger()
 
 def run_analysis(asset: str):
+    """Run trading analysis for a specific asset."""
     logger.info(f"--- Starting Analysis for {asset} ---")
     agent = TradingAgent()
     
