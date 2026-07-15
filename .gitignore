@@ -44,3 +44,8 @@ env/
 
 # Custom logs
 *.log
+
+# IDE configs
+.vscode/
+.idea/
+*.swp
