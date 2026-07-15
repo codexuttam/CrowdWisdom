@@ -14,7 +14,7 @@ from app_utils.logger import get_logger
 
 logger = get_logger()
 
-def run_analysis(asset):
+def run_analysis(asset: str):
     logger.info(f"--- Starting Analysis for {asset} ---")
     agent = TradingAgent()
     
