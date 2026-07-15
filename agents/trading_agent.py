@@ -16,6 +16,7 @@ from skills.prediction_tool import PREDICTION_TOOL_SCHEMA, prediction_tool_handl
 from skills.risk_tool import RISK_TOOL_SCHEMA, risk_tool_handler
 
 def register_custom_tools():
+    """Register CrowdWisdom specific tools in the tool registry."""
     registry.register(
         name="market_search",
         toolset="crowd_wisdom",
